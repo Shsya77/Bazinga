@@ -1,23 +1,29 @@
 import discord
 import os
-import dotenv 
+from dotenv import load_dotenv
 from discord.ext import commands
 import random
+import requests
 
 intents = discord.Intents.default()
-intents.message_content = True
+#intents.message_content = True
 intents.members = True
-TOKEN = "MTAzNzAzODU2MTExNzA4MTYyMA.GRCQbl.Fz7r8-9dftHlstOVnCgEOV3rTnVqWYPdIvMHLU"
+
+load_dotenv()
+TOKEN = os.getenv("TOKEN")
 client = commands.Bot(command_prefix="!",intents=intents)
+
+@client.command()
+async def quotes(ctx):
+    json_res = requests.get("https://zenquotes.io/api/quotes").json()
+    quote = json_res[0]['q']
+    author = json_res[0]['a']
+    await ctx.channel.send(f"{quote} - _**{author}**_")
 
 @client.event
 async def on_ready():
     print(f"{client.user} is logged in")
   
-
-@client.command()
-async def ping(ctx):
-    await ctx.reply("pong")
 
 @client.event
 async def on_ready():
